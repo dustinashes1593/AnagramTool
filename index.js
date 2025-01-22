@@ -1,10 +1,11 @@
 let caseState = undefined;
 
 const originalText = document.getElementById("originalText");
-const poolDisplay = document.getElementById("pool");
+const currentPool = document.getElementById("current-pool");
 const signatureDisplay = document.getElementById("signature");
 const scratchPad = document.getElementById("scratchPad");
 const errorDisplay = document.getElementById("error");
+const originalPoolE = document.getElementById("original-pool");
 
 let cb = document.getElementById("cbox");
 
@@ -40,34 +41,68 @@ function generatePool() {
         .map(([letter, count]) => `${count}${letter}`)
         .join(" ");
 
-    poolDisplay.value = pool;
+    currentPool.value = pool;
 
     signatureDisplay.textContent = signature;
+    originalPoolE.textContent = originalPool;
 }
 
-function updatePool() {
+
+
+
+
+let previous = "";
+function updatePool(e) {
+
     errorDisplay.textContent = "";
-    let tempPool = originalPool.split(" ");
-    let scratchLetters = scratchPad.value.toLowerCase().split("");
+    let cur = currentPool.value.toLowerCase();
 
+    if (e.data) {
 
-    for (let i = 0; i < scratchLetters.length; i++) {
-        let found = false;
-        for (let j = 0; j < tempPool.length; j++) {
-            if (scratchLetters[i] === tempPool[j]) {
-                tempPool.splice(j, 1);
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+        let data = e.data.toLowerCase();
+
+        if (!cur.includes(data)) {
             errorDisplay.textContent = "Invalid character entered.";
             scratchPad.value = scratchPad.value.slice(0, -1);
             return;
         }
+
+        cur = cur.replace(data, '');
+
+        currentPool.value = groupSameLetters(cur);
+
+    } else {
+
+        let diff = getDifference(previous, scratchPad.value.toLowerCase());
+
+        currentPool.value = groupSameLetters(cur + diff);
+
     }
-    pool = tempPool.join(" ");
-    poolDisplay.textContent = pool;
+
+    previous = scratchPad.value.toLowerCase();
+
+}
+
+function getDifference(str1, str2) {
+
+    const charCounts = {};
+
+    for (const char of str1) {
+        charCounts[char] = (charCounts[char] || 0) - 1;
+    }
+
+    for (const char of str2) {
+        charCounts[char] = (charCounts[char] || 0) + 1;
+    }
+
+    let result = "";
+    for (const char in charCounts) {
+        if (charCounts[char] !== 0) {
+            result += char.repeat(Math.abs(charCounts[char]));
+        }
+    }
+
+    return result;
 }
 
 

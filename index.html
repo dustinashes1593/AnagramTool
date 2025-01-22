@@ -1,30 +1,42 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Anagram Tool</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="index.js" defer></script>
-  </head>
-  <body>
-    <div id="container">
-      <h2>Original Text</h2>
-      <textarea id="originalText"></textarea>
 
-      <h2>Pool</h2>
-      <div class="checkbox">
-        <label>
-          <input type="checkbox" id="cbox" onclick="cycle(this)" checked />
-          <label for="cbox"></label>
-        </label>
-      </div>
-      <textarea id="pool"></textarea>
+<head>
+  <title>Anagram Tool</title>
+  <link rel="shortcut icon" href="/">
+  <link rel="stylesheet" href="style.css" />
+  <script src="index.js" defer></script>
+</head>
 
-      <h2>Signature</h2>
-      <div id="signature">&nbsp;</div>
+<body>
+  <div id="container">
+    <h3>Original Text</h3>
+    <textarea id="originalText"></textarea>
 
-      <h2>Scratch Pad</h2>
-      <textarea id="scratchPad"></textarea>
-      <div id="error" class="error"></div>
+    <h3>Original Pool</h3>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" id="cbox" onclick="cycle(this)" checked />
+        <label for="cbox"></label>
+      </label>
     </div>
-  </body>
+    <div id="original-pool" class="display-box">&nbsp;</div>
+
+    <h3>Signature</h3>
+    <div id="signature" class="display-box">&nbsp;</div>
+
+    <h3>Current Pool</h3>
+
+    <textarea id="current-pool"></textarea>
+
+
+    <h3>Notes Pad</h3>
+    <textarea id="notesPad"></textarea>
+
+    <h3>Scratch Pad</h3>
+    <textarea id="scratchPad"></textarea>
+    <div id="error" class="error"></div>
+  </div>
+</body>
+
 </html>

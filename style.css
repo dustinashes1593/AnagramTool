@@ -1,5 +1,6 @@
 body {
-    font-family: sans-serif;
+    font-family: 'Fira Code', 'Consolas', monospace;
+
 }
 
 #container {
@@ -9,19 +10,17 @@ body {
     margin: 20px auto;
 }
 
-textarea,
-#pool,
-#signature {
+textarea {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
     box-sizing: border-box;
+    white-space: pre-wrap;
+    height: 60px;
+    font-size: larger;
 }
 
-#pool {
-    white-space: pre-wrap;
-    /* Allow line breaks in pool */
-}
+
 
 .error {
     color: red;
@@ -72,8 +71,12 @@ textarea,
     padding: 5px;
 }
 
-#signature {
+.display-box {
     border: 2px solid #c6c6c6;
     border-radius: 3px;
     height: 40px;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
 }
