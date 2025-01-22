@@ -1,4 +1,7 @@
 let caseState = undefined;
+let originalPool = "";
+let pool = "";
+let signature = "";
 
 const originalText = document.getElementById("originalText");
 const currentPool = document.getElementById("current-pool");
@@ -11,18 +14,21 @@ let cb = document.getElementById("cbox");
 
 cb.addEventListener("change", generatePool);
 
-cb.checked = false;
+cb.checked = true;
 cycle(cb);
 
-originalText.addEventListener("input", generatePool);
+originalText.addEventListener("input", () => {
+    currentPool.value = "";
+    scratchPad.value = "";
+    generatePool();
+});
 
 scratchPad.addEventListener("input", updatePool);
 
 
 
-let originalPool = "";
-let pool = "";
-let signature = "";
+
+
 
 function generatePool() {
     errorDisplay.textContent = "";
@@ -41,7 +47,7 @@ function generatePool() {
         .map(([letter, count]) => `${count}${letter}`)
         .join(" ");
 
-    currentPool.value = pool;
+    currentPool.value = (!currentPool.value) ? pool : groupSameLetters(currentPool.value);
 
     signatureDisplay.textContent = signature;
     originalPoolE.textContent = originalPool;
@@ -57,17 +63,42 @@ function updatePool(e) {
     errorDisplay.textContent = "";
     let cur = currentPool.value.toLowerCase();
 
+
+
+
+
     if (e.data) {
 
-        let data = e.data.toLowerCase();
+        let data = e.data.toLowerCase().replace(/[^a-zA-Z]/g, "");
 
-        if (!cur.includes(data)) {
-            errorDisplay.textContent = "Invalid character entered.";
-            scratchPad.value = scratchPad.value.slice(0, -1);
-            return;
+
+
+        for (c of data) {
+
+            if (!cur.includes(c)) {
+                errorDisplay.textContent = `Invalid character entered: ${c}`;
+
+                if (e.inputType == "insertFromPaste") {
+
+                    let f = e.data.toLowerCase().lastIndexOf(c);
+                    console.log(f, e.data.substring(0, f), f <= 0 ? "" : e.data.substring(0, f));
+
+
+                    scratchPad.value += e.data.substring(0, f);
+
+                } else {
+
+                    scratchPad.value = scratchPad.value.slice(0, -1);
+
+                }
+                currentPool.value = groupSameLetters(cur);
+                previous = scratchPad.value.toLowerCase();
+                return;
+            }
+
+            cur = cur.replace(c, '');
+
         }
-
-        cur = cur.replace(data, '');
 
         currentPool.value = groupSameLetters(cur);
 

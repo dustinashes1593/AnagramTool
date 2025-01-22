@@ -1,39 +1,71 @@
 body {
-    font-family: 'Fira Code', 'Consolas', monospace;
-
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f0e3;
+    color: #333;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
 #container {
-    display: flex;
-    flex-direction: column;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     width: 80%;
-    margin: 20px auto;
+    max-width: 600px;
+}
+
+h3 {
+    color: #5c8a8a;
+    margin-bottom: 10px;
+}
+
+textarea,
+.display-box {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    resize: vertical;
+    background-color: #fefefe;
+    overflow-wrap: break-word;
+
+}
+
+.display-box {
+    min-height: 50px;
+    white-space: pre-wrap;
 }
 
 textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    white-space: pre-wrap;
-    height: 60px;
-    font-size: larger;
+    min-height: 80px;
 }
 
-
-
 .error {
-    color: red;
+    color: #d32f2f;
+    margin-top: 10px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
 .checkbox {
-    display: flex;
-    align-items: center;
-    position: relative;
+    padding: 5px;
+    margin-right: 10px;
     border: 2px solid #c6c6c6;
     border-radius: 3px;
     width: 20px;
     height: 20px;
+    position: relative;
 }
 
 .checkbox input[type=checkbox] {
@@ -52,7 +84,6 @@ textarea {
     align-items: center;
     justify-content: center;
     user-select: none;
-
 }
 
 .checkbox input[type="checkbox"]:not(:checked)+label::before {
@@ -67,16 +98,16 @@ textarea {
     content: "aA";
 }
 
-.checkbox {
-    padding: 5px;
+
+textarea:hover,
+.display-box:hover,
+.checkbox:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.display-box {
-    border: 2px solid #c6c6c6;
-    border-radius: 3px;
-    height: 40px;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
+textarea:focus,
+.display-box:focus {
+    outline: none;
+    border-color: #81b29a;
+    box-shadow: 0 0 5px rgba(129, 178, 154, 0.3);
 }
