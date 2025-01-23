@@ -10,8 +10,7 @@ const signatureDisplay = document.getElementById("signature");
 const scratchPad = document.getElementById("scratchPad");
 const errorDisplay = document.getElementById("error");
 const originalPoolE = document.getElementById("original-pool");
-
-let cb = document.getElementById("cbox");
+const cb = document.getElementById("cbox");
 
 cb.addEventListener("change", generatePool);
 
