@@ -2,6 +2,12 @@
 <html>
   <head>
     <title>Anagram Tool</title>
+    <meta
+      http-equiv="Cache-Control"
+      content="no-store, no-cache, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <link rel="shortcut icon" href="/" />
     <link rel="stylesheet" href="style.css" />
     <script src="index.js" defer></script>
@@ -10,7 +16,7 @@
   <body>
     <div id="container">
       <h3>Original Text</h3>
-      <textarea id="originalText"></textarea>
+      <textarea id="originalText" autocomplete="off"></textarea>
 
       <h3>Original Pool</h3>
       <div class="checkbox">
@@ -26,14 +32,14 @@
 
       <h3>Current Pool</h3>
 
-      <textarea id="current-pool"></textarea>
+      <textarea id="current-pool" autocomplete="off"></textarea>
 
       <h3>Scratch Pad</h3>
-      <textarea id="scratchPad"></textarea>
+      <textarea id="scratchPad" autocomplete="off"></textarea>
       <div id="error" class="error"></div>
 
       <h3>Notes Pad</h3>
-      <textarea id="notesPad"></textarea>
+      <textarea id="notesPad" autocomplete="off"></textarea>
     </div>
   </body>
 </html>
