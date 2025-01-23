@@ -2,6 +2,7 @@ let caseState = undefined;
 let originalPool = "";
 let pool = "";
 let signature = "";
+let previous = "";
 
 const originalText = document.getElementById("originalText");
 const currentPool = document.getElementById("current-pool");
@@ -25,10 +26,50 @@ originalText.addEventListener("input", () => {
 
 scratchPad.addEventListener("input", updatePool);
 
+scratchPad.addEventListener('paste', (event) => {
+    event.preventDefault();
 
+    errorDisplay.textContent = "";
+    let cur = currentPool.value.toLowerCase();
 
+    let pastedText = (event.clipboardData || window.clipboardData).getData('text');
 
+    let data = pastedText.toLowerCase();
 
+    for (let i = 0; i < data.length; i++) {
+        let c = data[i];
+
+        if (!isAlphabetic(c)) continue;
+
+        if (!cur.includes(c)) {
+            errorDisplay.textContent = `Character '${c}' is not in the pool!`;
+
+            pastedText = pastedText.substring(0, i);
+
+            break;
+        }
+
+        cur = cur.replace(c, '');
+
+    }
+
+    currentPool.value = groupSameLetters(cur);
+
+    const startPos = scratchPad.selectionStart;
+    const endPos = scratchPad.selectionEnd;
+
+    if (endPos - startPos > 0) {
+
+        currentPool.value = groupSameLetters(cur + scratchPad.value.substring(startPos, endPos).toLowerCase().replace(/[^a-zA-Z]/g, ""));
+
+    }
+
+    scratchPad.value = scratchPad.value.substring(0, startPos) + pastedText + scratchPad.value.substring(endPos);
+
+    previous = scratchPad.value.toLowerCase();
+
+    scratchPad.selectionStart = scratchPad.selectionEnd = startPos + pastedText.length;
+})
 
 function generatePool() {
     errorDisplay.textContent = "";
@@ -54,43 +95,20 @@ function generatePool() {
 }
 
 
-
-
-
-let previous = "";
 function updatePool(e) {
 
     errorDisplay.textContent = "";
     let cur = currentPool.value.toLowerCase();
 
-
-
-
-
     if (e.data) {
 
         let data = e.data.toLowerCase().replace(/[^a-zA-Z]/g, "");
 
-
-
         for (c of data) {
 
             if (!cur.includes(c)) {
-                errorDisplay.textContent = `Invalid character entered: ${c}`;
-
-                if (e.inputType == "insertFromPaste") {
-
-                    let f = e.data.toLowerCase().lastIndexOf(c);
-                    console.log(f, e.data.substring(0, f), f <= 0 ? "" : e.data.substring(0, f));
-
-
-                    scratchPad.value += e.data.substring(0, f);
-
-                } else {
-
-                    scratchPad.value = scratchPad.value.slice(0, -1);
-
-                }
+                errorDisplay.textContent = `'${c}' is not in the pool!`;
+                scratchPad.value = scratchPad.value.slice(0, -1);
                 currentPool.value = groupSameLetters(cur);
                 previous = scratchPad.value.toLowerCase();
                 return;
@@ -169,20 +187,16 @@ function cycle(self) {
     if (self.readOnly) {
         self.checked = self.readOnly = false;
         caseState = "lower";
-        //console.log(caseState);
-
     }
     else
         if (!self.checked) {
             self.readOnly = self.indeterminate = true;
             caseState = "both";
-            //console.log(caseState);
-
         } else {
             caseState = "upper";
-            //console.log(caseState);
         }
 }
 
-
-
+function isAlphabetic(char) {
+    return /^[A-Za-z]$/.test(char);
+}

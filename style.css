@@ -50,6 +50,7 @@ textarea {
 .error {
     color: #d32f2f;
     margin-top: 10px;
+    height: 30px;
 }
 
 .checkbox-container {
