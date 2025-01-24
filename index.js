@@ -41,7 +41,7 @@ scratchPad.addEventListener('paste', (event) => {
         if (!isAlphabetic(c)) continue;
 
         if (!cur.includes(c)) {
-            errorDisplay.textContent = `Character '${c}' is not in the pool!`;
+            errorDisplay.textContent = `${c}' is not in the pool!`;
 
             pastedText = pastedText.substring(0, i);
 
@@ -97,35 +97,56 @@ function generatePool() {
 function updatePool(e) {
 
     errorDisplay.textContent = "";
+
+    let diff = "";
     let cur = currentPool.value.toLowerCase();
 
     if (e.data) {
 
-        let data = e.data.toLowerCase().replace(/[^a-zA-Z]/g, "");
+        const start = scratchPad.selectionStart;
+        const end = scratchPad.selectionEnd;
 
-        for (c of data) {
+        let c = e.data.toLowerCase();
+
+        if (isAlphabetic(c)) {
 
             if (!cur.includes(c)) {
-                errorDisplay.textContent = `'${c}' is not in the pool!`;
-                scratchPad.value = scratchPad.value.slice(0, -1);
-                currentPool.value = groupSameLetters(cur);
-                previous = scratchPad.value.toLowerCase();
-                return;
-            }
 
-            cur = cur.replace(c, '');
+                errorDisplay.textContent = `'${c}' is not in the pool!`;
+
+                if (start === scratchPad.value.length) {
+                    scratchPad.value = scratchPad.value.slice(0, start - 1);
+                } else {
+                    scratchPad.value = scratchPad.value.slice(0, start - 1) + scratchPad.value.slice(start);
+                }
+
+
+                if (start <= scratchPad.value.length) {
+                    scratchPad.selectionStart = start - 1;
+                    scratchPad.selectionEnd = start - 1;
+                } else {
+                    scratchPad.selectionStart = scratchPad.value.length;
+                    scratchPad.selectionEnd = scratchPad.value.length;
+                }
+
+                diff = getDifference(previous, scratchPad.value.toLowerCase());
+
+
+            } else {
+                cur = cur.replace(c, '');
+            }
+        } else {
+            diff = getDifference(previous, scratchPad.value.toLowerCase());
 
         }
 
-        currentPool.value = groupSameLetters(cur);
-
     } else {
 
-        let diff = getDifference(previous, scratchPad.value.toLowerCase());
-
-        currentPool.value = groupSameLetters(cur + diff);
+        diff = getDifference(previous, scratchPad.value.toLowerCase());
 
     }
+
+    currentPool.value = groupSameLetters(cur + diff);
 
     previous = scratchPad.value.toLowerCase();
 
