@@ -102,9 +102,13 @@ function updatePool(e) {
     let diff = "";
     let cur = currentPool.value.toLowerCase();
 
-    if (e.inputType == "historyUndo") {
-        scratchPad.value = previous;
-        return;
+    switch (e.inputType) {
+        case "deleteByDrag":
+        case "insertFromDrop":
+        case "historyUndo":
+            scratchPad.value = previous;
+            return;
+
     }
 
     if (e.data) {
