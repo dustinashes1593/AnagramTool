@@ -11,11 +11,27 @@ const scratchPad = document.getElementById("scratchPad");
 const errorDisplay = document.getElementById("error");
 const originalPoolE = document.getElementById("original-pool");
 const cb = document.getElementById("cbox");
+const scratchPadHistory = document.getElementById("scratch-pad-history");
 
 cb.addEventListener("change", generatePool);
 
 cb.checked = true;
 cycle(cb);
+
+currentPool.addEventListener("input", () => {
+
+    if (scratchPad.value)
+        scratchPadHistory.innerHTML = "<u>" + scratchPad.value + "</u><br/><br/>" + scratchPadHistory.textContent;
+
+    scratchPad.select();
+    document.execCommand("delete");
+
+    currentPool.value = groupSameLetters(currentPool.value);
+
+    currentPool.focus();
+    currentPool.selectionStart = currentPool.value.length;
+
+});
 
 originalText.addEventListener("input", () => {
     previous = "";
@@ -242,4 +258,11 @@ function cycle(self) {
 
 function isAlphabetic(char) {
     return /^[A-Za-z]$/.test(char);
+}
+
+
+function clearEntry(id) {
+
+    document.getElementById(id).textContent = "";
+
 }
