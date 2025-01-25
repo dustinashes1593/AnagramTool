@@ -18,6 +18,7 @@ cb.checked = true;
 cycle(cb);
 
 originalText.addEventListener("input", () => {
+    previous = "";
     currentPool.value = "";
     scratchPad.value = "";
     generatePool();
@@ -138,8 +139,21 @@ function updatePool(e) {
 
 
             } else {
+
+
+                let d = undefined;
+                let m = scratchPad.value.toLowerCase();
+                if (m.includes(c)) {
+                    m = m.replace(c, '');
+                    d = getDifference(previous, m);
+                } else {
+                    d = getDifference(previous, m).replace(c, '');
+                }
+
+                cur += d;
                 cur = cur.replace(c, '');
             }
+
         } else {
             diff = getDifference(previous, scratchPad.value.toLowerCase());
 
