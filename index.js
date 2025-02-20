@@ -14,8 +14,12 @@ const cb = document.getElementById("cbox");
 const scratchPadHistory = document.getElementById("scratch-pad-history");
 const poolIterations = document.getElementById("pool-iterations");
 const iterationCounter = document.getElementById("iteration-counter");
+const copyCurrentPoolBtn = document.getElementById("copyCurrentPoolBtn");
 
-const WVU = ['u', 'v', 'w'];
+const VU = ['u', 'v'];
+
+copyCurrentPoolBtn.addEventListener('click', copyCurrentPool);
+copyCurrentPoolBtn.appendChild(getCopySVGIcon());
 
 cb.addEventListener("change", () => {
     generatePool();
@@ -275,13 +279,14 @@ function clearEntry(id) {
 }
 
 
+
 function buildPoolIterations() {
     poolIterations.innerHTML = "";
     iterationCounter.innerText = "0";
 
     let cur_pool = currentPool.value.toLowerCase();
 
-    if (!WVU.some(e => cur_pool.includes(e))) return;
+    if (!VU.some(e => cur_pool.includes(e))) return;
 
     let iterations = new Set();
     iterations.add(cur_pool);
@@ -291,18 +296,6 @@ function buildPoolIterations() {
     while (queue.length > 0) {
         let current = queue.shift();
 
-        // W replacement
-        for (let i = 0; i < current.length; i++) {
-            if (current[i] === 'w') {
-                for (let replacement of ["vv", "uu", "uv"]) {
-                    let newIteration = current.substring(0, i) + replacement + current.substring(i + 1);
-                    if (!iterations.has(newIteration)) {
-                        iterations.add(newIteration);
-                        queue.push(newIteration);
-                    }
-                }
-            }
-        }
 
         // U/V interchange
         for (let i = 0; i < current.length; i++) {
@@ -320,6 +313,26 @@ function buildPoolIterations() {
                 }
             }
         }
+
+
+        let cur_sorted = current.split("").sort().join("");
+
+
+
+        for (let i = 0; i < cur_sorted.length - 1; i++) {
+
+            if ((cur_sorted[i] == 'u' || cur_sorted[i] == 'v') && (cur_sorted[i + 1] == 'u' || cur_sorted[i + 1] == 'v')) {
+
+                let newIteration = cur_sorted.substring(0, i) + 'w' + cur_sorted.substring(i + 2);
+                if (!iterations.has(newIteration)) {
+                    iterations.add(newIteration);
+                    queue.push(newIteration);
+                }
+
+            }
+
+        }
+
     }
 
     let iterationsArray = Array.from(iterations);
@@ -376,16 +389,7 @@ function buildIterationUI(iterationArray) {
 
         const btnCopyToClipboard = document.createElement('button');
         btnCopyToClipboard.id = `copy-to-clipboard-${i}`;
-        const svg2 = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg2.setAttribute('viewBox', '0 0 24 24');
-        svg2.setAttribute('fill', 'none');
-        const path2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path2.setAttribute('d', 'M8 5.00005C7.01165 5.00082 6.49359 5.01338 6.09202 5.21799C5.71569 5.40973 5.40973 5.71569 5.21799 6.09202C5 6.51984 5 7.07989 5 8.2V17.8C5 18.9201 5 19.4802 5.21799 19.908C5.40973 20.2843 5.71569 20.5903 6.09202 20.782C6.51984 21 7.07989 21 8.2 21H15.8C16.9201 21 17.4802 21 17.908 20.782C18.2843 20.5903 18.5903 20.2843 18.782 19.908C19 19.4802 19 18.9201 19 17.8V8.2C19 7.07989 19 6.51984 18.782 6.09202C18.5903 5.71569 18.2843 5.40973 17.908 5.21799C17.5064 5.01338 16.9884 5.00082 16 5.00005M8 5.00005V7H16V5.00005M8 5.00005V4.70711C8 4.25435 8.17986 3.82014 8.5 3.5C8.82014 3.17986 9.25435 3 9.70711 3H14.2929C14.7456 3 15.1799 3.17986 15.5 3.5C15.8201 3.82014 16 4.25435 16 4.70711V5.00005M12 11V17M9 14H15');
-        path2.setAttribute('stroke', '#000000');
-        path2.setAttribute('stroke-width', '2');
-        path2.setAttribute('stroke-linecap', 'round');
-        path2.setAttribute('stroke-linejoin', 'round');
-        svg2.appendChild(path2);
+
         btnCopyToClipboard.addEventListener('click', (e) => {
 
             navigator.clipboard.writeText(iterationArray[i])
@@ -394,7 +398,7 @@ function buildIterationUI(iterationArray) {
                 });
 
         });
-        btnCopyToClipboard.appendChild(svg2);
+        btnCopyToClipboard.appendChild(getCopySVGIcon());
 
 
         const btnDelete = document.createElement('button');
@@ -452,5 +456,32 @@ function setCurrentPoolValue(val) {
     scratchPad.value = "";
     generatePool();
     buildPoolIterations();
+
+}
+
+
+function copyCurrentPool() {
+
+    navigator.clipboard.writeText(currentPool.value)
+        .catch((err) => {
+            errorDisplay.textContent = "Could not copy to clipboard!";
+        });
+
+}
+
+function getCopySVGIcon() {
+
+    const svg2 = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg2.setAttribute('viewBox', '0 0 24 24');
+    svg2.setAttribute('fill', 'none');
+    const path2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path2.setAttribute('d', 'M8 5.00005C7.01165 5.00082 6.49359 5.01338 6.09202 5.21799C5.71569 5.40973 5.40973 5.71569 5.21799 6.09202C5 6.51984 5 7.07989 5 8.2V17.8C5 18.9201 5 19.4802 5.21799 19.908C5.40973 20.2843 5.71569 20.5903 6.09202 20.782C6.51984 21 7.07989 21 8.2 21H15.8C16.9201 21 17.4802 21 17.908 20.782C18.2843 20.5903 18.5903 20.2843 18.782 19.908C19 19.4802 19 18.9201 19 17.8V8.2C19 7.07989 19 6.51984 18.782 6.09202C18.5903 5.71569 18.2843 5.40973 17.908 5.21799C17.5064 5.01338 16.9884 5.00082 16 5.00005M8 5.00005V7H16V5.00005M8 5.00005V4.70711C8 4.25435 8.17986 3.82014 8.5 3.5C8.82014 3.17986 9.25435 3 9.70711 3H14.2929C14.7456 3 15.1799 3.17986 15.5 3.5C15.8201 3.82014 16 4.25435 16 4.70711V5.00005M12 11V17M9 14H15');
+    path2.setAttribute('stroke', '#000000');
+    path2.setAttribute('stroke-width', '2');
+    path2.setAttribute('stroke-linecap', 'round');
+    path2.setAttribute('stroke-linejoin', 'round');
+    svg2.appendChild(path2);
+
+    return svg2;
 
 }
