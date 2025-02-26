@@ -3,6 +3,12 @@ let originalPool = "";
 let pool = "";
 let signature = "";
 let previous = "";
+let timeout;
+
+const VU = ['u', 'v'];
+const BASE_ANAGRAM_URL = "http://localhost:3000";
+const DEBOUNCE_DELAY = 230;
+const PING_DELAY = 3000;
 
 const originalText = document.getElementById("originalText");
 const currentPool = document.getElementById("current-pool");
@@ -15,8 +21,18 @@ const scratchPadHistory = document.getElementById("scratch-pad-history");
 const poolIterations = document.getElementById("pool-iterations");
 const iterationCounter = document.getElementById("iteration-counter");
 const copyCurrentPoolBtn = document.getElementById("copyCurrentPoolBtn");
+const anagramGenerator = document.getElementById("anagram-generator");
+const anagramWords = document.getElementById("anagram-words");
+const anagramsList = document.getElementById("anagrams-list");
 
-const VU = ['u', 'v'];
+anagramWords.addEventListener("input", function () {
+
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+        find_anagrams(anagramWords.value);
+    }, DEBOUNCE_DELAY);
+});
 
 copyCurrentPoolBtn.addEventListener('click', copyCurrentPool);
 copyCurrentPoolBtn.appendChild(getCopySVGIcon());
@@ -27,8 +43,11 @@ cb.addEventListener("change", () => {
 
 });
 
+
 cb.checked = true;
+reset_anagram_module();
 cycle(cb);
+setInterval(ping_anagram_server, PING_DELAY);
 
 currentPool.addEventListener("input", () => {
 
@@ -128,6 +147,7 @@ function updatePool(e) {
 
     let diff = "";
     let cur = currentPool.value.toLowerCase();
+
 
     switch (e.inputType) {
         case "deleteByDrag":
@@ -278,8 +298,6 @@ function clearEntry(id) {
 
 }
 
-
-
 function buildPoolIterations() {
     poolIterations.innerHTML = "";
     iterationCounter.innerText = "0";
@@ -295,7 +313,6 @@ function buildPoolIterations() {
 
     while (queue.length > 0) {
         let current = queue.shift();
-
 
         // U/V interchange
         for (let i = 0; i < current.length; i++) {
@@ -314,10 +331,7 @@ function buildPoolIterations() {
             }
         }
 
-
         let cur_sorted = current.split("").sort().join("");
-
-
 
         for (let i = 0; i < cur_sorted.length - 1; i++) {
 
@@ -441,11 +455,7 @@ function buildIterationUI(iterationArray) {
 
         poolIterations.appendChild(rowDiv);
 
-
-
     }
-
-
 
 }
 
@@ -485,3 +495,112 @@ function getCopySVGIcon() {
     return svg2;
 
 }
+
+async function ping_anagram_server() {
+
+    try {
+        await fetch(BASE_ANAGRAM_URL + '/health', { signal: AbortSignal.timeout(1000) }).then((response) => {
+            if (response.ok) {
+                anagramGenerator.classList.remove('disabled-container');
+
+            } else {
+                reset_anagram_module();
+
+            }
+        });
+
+    } catch (e) {
+
+        reset_anagram_module();
+
+    }
+
+}
+
+function find_anagrams(word) {
+
+    word = word.trim();
+
+    if (!word) {
+        reset_anagram_module();
+        return;
+    }
+
+    fetch(`${BASE_ANAGRAM_URL}/words/anagrams?word=${encodeURIComponent(word)}`)
+        .then(response => response.json())
+        .then(data => {
+
+            anagramsList.innerHTML = "";
+
+            for (let anagram of data) {
+
+                const anagram_div = document.createElement('div');
+                const id = `anagram-${anagram.id}`
+                anagram_div.id = id;
+                anagram_div.innerText = anagram.word;
+                anagram_div.classList.add('anagram-word');
+                anagram_div.draggable = true;
+                anagram_div.ondragstart = drag;
+                anagram_div.addEventListener('click', () => {
+
+                    navigator.clipboard.writeText(anagram.word)
+                        .catch((_err) => {
+                            errorDisplay.textContent = "Could not copy to clipboard!";
+                        });
+
+                })
+
+                const delete_word = document.createElement('button');
+                delete_word.classList.add('delete-word');
+                delete_word.addEventListener('click', async () => {
+
+                    const result = window.confirm(`Are you sure you want to delete this word '${anagram.word}' from the database?`);
+                    if (!result) return;
+
+
+                    await fetch(`${BASE_ANAGRAM_URL}/words/${anagram.id}`, {
+                        method: "DELETE"
+                    })
+                        .then((response) => {
+
+                            if (response.ok) {
+                                const word_div = document.getElementById(id);
+                                if (!word_div) return;
+
+                                word_div.remove();
+                            }
+
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                            errorDisplay.textContent = "Could not delete this word!";
+                        });
+
+
+                });
+                anagram_div.appendChild(delete_word);
+
+                anagramsList.appendChild(anagram_div);
+            }
+
+
+        })
+        .catch(error => {
+            console.error("API request error:", error);
+        });
+
+}
+
+function reset_anagram_module() {
+
+    anagramGenerator.classList.add('disabled-container');
+    anagramWords.value = "";
+    anagramsList.innerHTML = "No items.";
+
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.innerText);
+}
+
+

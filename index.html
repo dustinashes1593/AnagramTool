@@ -15,30 +15,44 @@
 
   <body>
     <div id="container">
-      <h3>Original Text</h3>
-      <textarea
-        id="originalText"
-        autocomplete="off"
-        spellcheck="false"
-        autocorrect="off"
-      ></textarea>
+      <div class="divider">
+        <div class="divider-item">
+          <h3>Original Text</h3>
+          <textarea
+            id="originalText"
+            autocomplete="off"
+            spellcheck="false"
+            autocorrect="off"
+          ></textarea>
+        </div>
 
-      <div class="aligned-title">
-        <h3>Original Pool</h3>
+        <div class="divider-item">
+          <div class="aligned-title">
+            <h3>Original Pool</h3>
 
-        <div class="tool-box">
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" id="cbox" onclick="cycle(this)" checked />
-              <label for="cbox"></label>
-            </label>
+            <div class="tool-box">
+              <div class="checkbox">
+                <label>
+                  <input
+                    type="checkbox"
+                    id="cbox"
+                    onclick="cycle(this)"
+                    checked
+                  />
+                  <label for="cbox"></label>
+                </label>
+              </div>
+            </div>
           </div>
+
+          <div id="original-pool" class="display-box"></div>
+        </div>
+
+        <div class="divider-item">
+          <h3>Signature</h3>
+          <div id="signature" class="display-box"></div>
         </div>
       </div>
-      <div id="original-pool" class="display-box"></div>
-
-      <h3>Signature</h3>
-      <div id="signature" class="display-box"></div>
 
       <div class="divider">
         <div class="divider-item">
@@ -180,13 +194,34 @@
 
       <div id="error" class="error"></div>
 
-      <h3>Notes Pad</h3>
-      <textarea
-        id="notesPad"
-        autocomplete="off"
-        spellcheck="false"
-        autocorrect="off"
-      ></textarea>
+      <div class="divider">
+        <div class="divider-item">
+          <h3>Notes Pad</h3>
+          <textarea
+            id="notesPad"
+            autocomplete="off"
+            spellcheck="false"
+            autocorrect="off"
+          ></textarea>
+        </div>
+
+        <div class="divider-item">
+          <h3>Anagram Generator</h3>
+          <div id="anagram-generator" class="display-box disabled-container">
+            <div>
+              <input
+                type="text"
+                name="words"
+                id="anagram-words"
+                placeholder="Words..."
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+            <div id="anagrams-list" class="display-box grower"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>
