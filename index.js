@@ -6,9 +6,7 @@ let previous = "";
 let timeout;
 
 const VU = ['u', 'v'];
-const BASE_ANAGRAM_URL = "http://localhost:3000";
 const DEBOUNCE_DELAY = 230;
-const PING_DELAY = 3000;
 
 const originalText = document.getElementById("originalText");
 const currentPool = document.getElementById("current-pool");
@@ -47,7 +45,6 @@ cb.addEventListener("change", () => {
 cb.checked = true;
 reset_anagram_module();
 cycle(cb);
-setInterval(ping_anagram_server, PING_DELAY);
 
 currentPool.addEventListener("input", () => {
 
@@ -496,27 +493,6 @@ function getCopySVGIcon() {
 
 }
 
-async function ping_anagram_server() {
-
-    try {
-        await fetch(BASE_ANAGRAM_URL + '/health', { signal: AbortSignal.timeout(1000) }).then((response) => {
-            if (response.ok) {
-                anagramGenerator.classList.remove('disabled-container');
-
-            } else {
-                reset_anagram_module();
-
-            }
-        });
-
-    } catch (e) {
-
-        reset_anagram_module();
-
-    }
-
-}
-
 function find_anagrams(word) {
 
     word = word.trim();
@@ -526,7 +502,7 @@ function find_anagrams(word) {
         return;
     }
 
-    fetch(`${BASE_ANAGRAM_URL}/words/anagrams?word=${encodeURIComponent(word)}`)
+    fetch(`words/anagrams?word=${encodeURIComponent(word)}`)
         .then(response => response.json())
         .then(data => {
 
@@ -558,7 +534,7 @@ function find_anagrams(word) {
                     if (!result) return;
 
 
-                    await fetch(`${BASE_ANAGRAM_URL}/words/${anagram.id}`, {
+                    await fetch(`words/${anagram.id}`, {
                         method: "DELETE"
                     })
                         .then((response) => {
@@ -593,7 +569,6 @@ function find_anagrams(word) {
 
 function reset_anagram_module() {
 
-    anagramGenerator.classList.add('disabled-container');
     anagramWords.value = "";
     anagramsList.innerHTML = "No items.";
 
